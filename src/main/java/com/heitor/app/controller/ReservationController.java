@@ -6,6 +6,8 @@ import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.enums.ReservationStatus;
 import com.heitor.app.service.ReservationService;
 import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +53,7 @@ public class ReservationController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ReservationResponseDTO> createReservation(@Valid @RequestBody ReservationRequestDTO dto) {
-        return ResponseEntity.ok(reservationService.createReservation(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservationService.createReservation(dto));
     }
 
     @PatchMapping(

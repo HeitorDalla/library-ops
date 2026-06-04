@@ -6,6 +6,8 @@ import com.heitor.app.enums.LoanStatus;
 import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.service.LoanService;
 import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +53,7 @@ public class LoanController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<LoanResponseDTO> createLoan(@Valid @RequestBody LoanRequestDTO dto) {
-        return ResponseEntity.ok(loanService.createLoan(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(loanService.createLoan(dto));
     }
 
     @PutMapping(
