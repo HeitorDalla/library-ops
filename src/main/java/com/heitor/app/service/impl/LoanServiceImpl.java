@@ -17,7 +17,6 @@ import com.heitor.app.repository.LoanRepository;
 import com.heitor.app.repository.UserRepository;
 import com.heitor.app.service.FineService;
 import com.heitor.app.service.LoanService;
-import com.heitor.app.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

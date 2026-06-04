@@ -6,20 +6,15 @@ import com.heitor.app.enums.LoanStatus;
 import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.service.LoanService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @RestController
 @RequestMapping("/loans")
 public class LoanController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoanController.class);
-
     private final LoanService loanService;
 
     public LoanController(LoanService loanService) {

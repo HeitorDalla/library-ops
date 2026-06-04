@@ -9,8 +9,6 @@ import com.heitor.app.enums.BookStatus;
 import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.service.BookService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/books")
 public class BookController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookController.class);
-
     private final BookService bookService;
 
     public BookController(BookService bookService) {

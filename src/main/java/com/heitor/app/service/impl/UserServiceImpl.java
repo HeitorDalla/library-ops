@@ -20,7 +20,6 @@ import com.heitor.app.repository.ReservationRepository;
 import com.heitor.app.repository.UserRepository;
 import com.heitor.app.service.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,6 @@ public class UserServiceImpl implements UserService {
     private final LoanMapper loanMapper;
     private final ReservationMapper reservationMapper;
 
-    @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            LoanRepository loanRepository,
                            ReservationRepository reservationRepository,
