@@ -6,8 +6,7 @@ import com.heitor.app.dto.output.UserResponseDTO;
 import com.heitor.app.entity.User;
 import com.heitor.app.enums.*;
 import com.heitor.app.exception.BusinessException;
-import com.heitor.app.mapper.LoanMapper;
-import com.heitor.app.mapper.ReservationMapper;
+import com.heitor.app.exception.UserNotFoundException;
 import com.heitor.app.repository.FineRepository;
 import com.heitor.app.repository.LoanRepository;
 import com.heitor.app.repository.ReservationRepository;
@@ -46,12 +45,6 @@ public class UserServiceImplTest {
 
     @Mock
     private UserMapper userMapper;
-
-    @Mock
-    private LoanMapper loanMapper;
-
-    @Mock
-    private ReservationMapper reservationMapper;
 
     @Test
     public void deveCriarUsuarioQuandoDadosValidos() {
@@ -150,6 +143,27 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void deveLancarExcecaoQuandoAtualizarParcialmenteUsuarioInexistente() {
+        Long idUser = 1L;
+
+        UserPatchDTO dto = new UserPatchDTO();
+
+        when(userRepository.findById(idUser))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> {
+                userServiceImpl.partiallyUpdateUser(dto, idUser);
+        });
+
+        verify(userRepository)
+                .findById(idUser);
+        verify(userMapper, never())
+                .patchEntity(any(), any());
+        verify(userRepository, never())
+                .save(any());
+    }
+ 
+    @Test
     public void atualizacaoParcialUsuarioQuandoNomeNumeroInformado() {
         Long idUser = 1L;
 
@@ -237,6 +251,27 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void deveLancarExcecaoQuandoAtualizarUsuarioInexistente() {
+        Long idUser = 1L;
+
+        UserUpsertDTO dto = new UserUpsertDTO();
+
+        when(userRepository.findById(idUser))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> {
+                userServiceImpl.updateUser(dto, idUser);
+        });
+
+        verify(userRepository)
+                .findById(idUser);
+        verify(userMapper, never())
+                .updateEntity(any(), any());
+        verify(userRepository, never())
+                .save(any());
+    }
+
+    @Test
     public void ativarUsuarioQuandoUsuarioExiste() {
         Long idUser = 1L;
 
@@ -258,6 +293,23 @@ public class UserServiceImplTest {
                 .findById(idUser);
         verify(userRepository)
                 .save(user);
+    }
+
+    @Test
+    public void deveLancarExcecaoQuandoAtivarUsuarioInexistente() {
+        Long idUser = 1L;
+
+        when(userRepository.findById(idUser))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> {
+                userServiceImpl.activateUser(idUser);
+        });
+
+        verify(userRepository)
+                .findById(idUser);
+        verify(userRepository, never())
+                .save(any());
     }
 
     @Test
@@ -381,6 +433,23 @@ public class UserServiceImplTest {
                 .existsByLoanUserAndFineStatus(user, FineStatus.OPEN);
         verify(reservationRepository)
                 .existsByUserAndReservationStatus(user, List.of(ReservationStatus.PENDING, ReservationStatus.EXPIRED));
+        verify(userRepository, never())
+                .save(any());
+    }
+
+    @Test
+    public void deveLancarExcecaoQuandoDesativarUsuarioInexistente() {
+        Long idUser = 1L;
+
+        when(userRepository.findById(idUser))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> {
+                userServiceImpl.deactivateUser(idUser);
+        });
+
+        verify(userRepository)
+                .findById(idUser);
         verify(userRepository, never())
                 .save(any());
     }
