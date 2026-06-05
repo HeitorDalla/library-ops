@@ -68,7 +68,7 @@ public class ReservationController {
             path = "/{id}/cancel",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ReservationResponseDTO> cancelReservation(@PathVariable Long id) {
+    public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {
         reservationService.cancelReservation(id);
 
         return ResponseEntity.noContent().build();

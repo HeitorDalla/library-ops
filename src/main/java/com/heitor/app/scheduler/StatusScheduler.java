@@ -22,7 +22,7 @@ public class StatusScheduler {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *") // TODO DIA À MEIA-NOITE
+    @Scheduled(cron = "0 0 0 * * *") 
     public void updateOverdueLoansAndExpiredReservations() {
         LocalDate today = LocalDate.now();
 
