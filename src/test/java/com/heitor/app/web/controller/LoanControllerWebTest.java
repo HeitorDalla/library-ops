@@ -1,5 +1,6 @@
-package com.heitor.app.controller;
+package com.heitor.app.web.controller;
 
+import com.heitor.app.controller.LoanController;
 import com.heitor.app.dto.input.LoanRequestDTO;
 import com.heitor.app.dto.output.LoanResponseDTO;
 import com.heitor.app.service.LoanService;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class LoanControllerTest {
+public class LoanControllerWebTest {
     @InjectMocks
     private LoanController loanController;
 

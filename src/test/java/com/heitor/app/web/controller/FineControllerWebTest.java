@@ -1,5 +1,6 @@
-package com.heitor.app.controller;
+package com.heitor.app.web.controller;
 
+import com.heitor.app.controller.FineController;
 import com.heitor.app.dto.output.FineResponseDTO;
 import com.heitor.app.service.FineService;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class FineControllerTest {
+public class FineControllerWebTest {
 
     @InjectMocks
     private FineController fineController;

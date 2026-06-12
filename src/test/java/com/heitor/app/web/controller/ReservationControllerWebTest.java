@@ -1,5 +1,6 @@
-package com.heitor.app.controller;
+package com.heitor.app.web.controller;
 
+import com.heitor.app.controller.ReservationController;
 import com.heitor.app.dto.input.ReservationRequestDTO;
 import com.heitor.app.dto.output.ReservationResponseDTO;
 import com.heitor.app.service.ReservationService;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ReservationControllerTest {
+public class ReservationControllerWebTest {
     @InjectMocks
     private ReservationController reservationController;
 

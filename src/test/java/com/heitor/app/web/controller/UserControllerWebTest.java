@@ -1,5 +1,6 @@
-package com.heitor.app.controller;
+package com.heitor.app.web.controller;
 
+import com.heitor.app.controller.UserController;
 import com.heitor.app.dto.input.UserPatchDTO;
 import com.heitor.app.dto.input.UserUpsertDTO;
 import com.heitor.app.dto.output.UserResponseDTO;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserControllerTest {
+public class UserControllerWebTest {
 
     @InjectMocks
     private UserController userController;

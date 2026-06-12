@@ -1,5 +1,6 @@
-package com.heitor.app.controller;
+package com.heitor.app.web.controller;
 
+import com.heitor.app.controller.BookController;
 import com.heitor.app.dto.common.StockDTO;
 import com.heitor.app.dto.input.*;
 import com.heitor.app.dto.output.BookResponseDTO;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class BookControllerTest {
+public class BookControllerWebTest {
 
     @InjectMocks
     private BookController bookController;

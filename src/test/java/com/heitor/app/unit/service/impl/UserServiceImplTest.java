@@ -1,4 +1,4 @@
-package com.heitor.app.service.impl;
+package com.heitor.app.unit.service.impl;
 
 import com.heitor.app.dto.input.UserPatchDTO;
 import com.heitor.app.dto.input.UserUpsertDTO;
@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.heitor.app.mapper.UserMapper;
 import com.heitor.app.repository.UserRepository;
+import com.heitor.app.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;

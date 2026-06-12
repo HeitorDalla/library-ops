@@ -1,4 +1,4 @@
-package com.heitor.app.service.impl;
+package com.heitor.app.unit.service.impl;
 
 import com.heitor.app.dto.common.StockDTO;
 import com.heitor.app.dto.input.BookCreateDTO;
@@ -13,6 +13,7 @@ import com.heitor.app.mapper.BookMapper;
 import com.heitor.app.repository.BookRepository;
 import com.heitor.app.repository.LoanRepository;
 import com.heitor.app.repository.ReservationRepository;
+import com.heitor.app.service.impl.BookServiceImpl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

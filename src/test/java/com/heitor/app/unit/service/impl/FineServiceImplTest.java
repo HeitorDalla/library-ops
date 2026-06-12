@@ -1,4 +1,4 @@
-package com.heitor.app.service.impl;
+package com.heitor.app.unit.service.impl;
 
 import com.heitor.app.dto.output.FineResponseDTO;
 import com.heitor.app.entity.Fine;
@@ -9,6 +9,7 @@ import com.heitor.app.exception.BusinessException;
 import com.heitor.app.exception.FineNotFoundException;
 import com.heitor.app.mapper.FineMapper;
 import com.heitor.app.repository.FineRepository;
+import com.heitor.app.service.impl.FineServiceImpl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
