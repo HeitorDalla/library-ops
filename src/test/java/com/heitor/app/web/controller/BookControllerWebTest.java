@@ -2,214 +2,722 @@ package com.heitor.app.web.controller;
 
 import com.heitor.app.controller.BookController;
 import com.heitor.app.dto.common.StockDTO;
-import com.heitor.app.dto.input.*;
+import com.heitor.app.dto.input.BookCreateDTO;
+import com.heitor.app.dto.input.BookPatchDTO;
+import com.heitor.app.dto.input.BookUpdateDTO;
 import com.heitor.app.dto.output.BookResponseDTO;
+import com.heitor.app.enums.BookStatus;
+import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.service.BookService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(BookController.class)
 public class BookControllerWebTest {
 
-    @InjectMocks
-    private BookController bookController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @MockitoBean
     private BookService bookService;
 
-    @Test
-    public void deveCriarLivroERetornarCreated() {
-        BookCreateDTO bookCreateDTO = new BookCreateDTO();
-        bookCreateDTO.setTitle("Titulo teste");
-        bookCreateDTO.setAuthor("Author teste");
-        bookCreateDTO.setIsbn("123456789");
-        bookCreateDTO.setPublicationYear(2000L);
-        bookCreateDTO.setLanguage("Portugues");
-        bookCreateDTO.setTotalQuantity(20);
-
+    private BookResponseDTO criarBookResponseDTO() {
         BookResponseDTO bookResponseDTO = new BookResponseDTO();
-        bookResponseDTO.setTitle("Titulo teste");
-        bookResponseDTO.setAuthor("Author teste");
-        bookResponseDTO.setIsbn("123456789");
-        bookResponseDTO.setPublicationYear(2000L);
-        bookResponseDTO.setLanguage("Portugues");
-        bookResponseDTO.setTotalQuantity(20);
 
-        when(bookService.createBook(bookCreateDTO))
-                .thenReturn(bookResponseDTO);
+        bookResponseDTO.setId(1L);
+        bookResponseDTO.setTitle("Livro teste");
+        bookResponseDTO.setAuthor("Autor teste");
+        bookResponseDTO.setIsbn("9788535902778");
+        bookResponseDTO.setPublicationYear(2024L);
+        bookResponseDTO.setLanguage("Português");
+        bookResponseDTO.setTotalQuantity(10);
+        bookResponseDTO.setAvailableQuantity(8);
+        bookResponseDTO.setRegistrationDate(LocalDate.of(2024, 1, 10));
+        bookResponseDTO.setBookStatus(BookStatus.AVAILABLE);
+        bookResponseDTO.setRecordStatus(RecordStatus.ACTIVE);
 
-        ResponseEntity<BookResponseDTO> resultado = bookController.createBook(bookCreateDTO);
+        return bookResponseDTO;
+    }
 
-        assertEquals(HttpStatus.CREATED, resultado.getStatusCode());
-        assertNotNull(resultado.getBody());
-        assertEquals("Titulo teste", resultado.getBody().getTitle());
-        assertEquals("Author teste", resultado.getBody().getAuthor());
-        assertEquals("123456789", resultado.getBody().getIsbn());
-        assertEquals(2000L, resultado.getBody().getPublicationYear());
-        assertEquals("Portugues", resultado.getBody().getLanguage());
-        assertEquals(20, resultado.getBody().getTotalQuantity());
+    // Testes para o metodo 'getAllBooks'
+    @Test
+    public void getAllBooks_deveRetornarOk_quandoNaoHouverFiltros() throws Exception {
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
 
-        verify(bookService).createBook(bookCreateDTO);
+        List<BookResponseDTO> books = List.of(bookResponseDTO);
+
+        when(bookService.getAllBooks(null, null, null, null, null, null, null, null))
+                .thenReturn(books);
+
+        mockMvc.perform(get("/books")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].title").value("Livro teste"))
+                .andExpect(jsonPath("$[0].author").value("Autor teste"))
+                .andExpect(jsonPath("$[0].isbn").value("9788535902778"))
+                .andExpect(jsonPath("$[0].publicationYear").value(2024))
+                .andExpect(jsonPath("$[0].language").value("Português"))
+                .andExpect(jsonPath("$[0].totalQuantity").value(10))
+                .andExpect(jsonPath("$[0].availableQuantity").value(8))
+                .andExpect(jsonPath("$[0].registrationDate").value("2024-01-10"))
+                .andExpect(jsonPath("$[0].bookStatus").value("AVAILABLE"))
+                .andExpect(jsonPath("$[0].recordStatus").value("ACTIVE"));
+
+        verify(bookService, times(1)).getAllBooks(null, null, null, null, null, null, null, null);
         verifyNoMoreInteractions(bookService);
     }
 
     @Test
-    public void deveAtualizarParcialmenteLivroERetornarOk() {
+    public void getAllBooks_deveRetornarOk_quandoTituloForInformado() throws Exception {
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
+
+        List<BookResponseDTO> books = List.of(bookResponseDTO);
+
+        when(bookService.getAllBooks("Livro teste", null, null, null, null, null, null, null))
+                .thenReturn(books);
+
+        mockMvc.perform(get("/books")
+                        .param("title", "Livro teste")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].title").value("Livro teste"))
+                .andExpect(jsonPath("$[0].author").value("Autor teste"))
+                .andExpect(jsonPath("$[0].isbn").value("9788535902778"));
+
+        verify(bookService).getAllBooks("Livro teste", null, null, null, null, null, null, null);
+        verifyNoMoreInteractions(bookService);
+    }
+
+    @Test
+    public void getAllBooks_deveRetornarOk_quandoTodosFiltrosForemInformados() throws Exception {
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
+
+        List<BookResponseDTO> books = List.of(bookResponseDTO);
+
+        when(bookService.getAllBooks(
+                "Livro teste",
+                "Autor teste",
+                "9788535902778",
+                2024L,
+                "Português",
+                10,
+                BookStatus.AVAILABLE,
+                RecordStatus.ACTIVE
+        )).thenReturn(books);
+
+        mockMvc.perform(get("/books")
+                        .param("title", "Livro teste")
+                        .param("author", "Autor teste")
+                        .param("isbn", "9788535902778")
+                        .param("publicationYear", "2024")
+                        .param("language", "Português")
+                        .param("totalQuantity", "10")
+                        .param("bookStatus", "AVAILABLE")
+                        .param("recordStatus", "ACTIVE")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].title").value("Livro teste"))
+                .andExpect(jsonPath("$[0].bookStatus").value("AVAILABLE"))
+                .andExpect(jsonPath("$[0].recordStatus").value("ACTIVE"));
+
+        verify(bookService).getAllBooks(
+                "Livro teste",
+                "Autor teste",
+                "9788535902778",
+                2024L,
+                "Português",
+                10,
+                BookStatus.AVAILABLE,
+                RecordStatus.ACTIVE
+        );
+        verifyNoMoreInteractions(bookService);
+    }
+
+    @Test
+    public void getAllBooks_deveRetornarBadRequest_quandoPublicationYearNaoForNumerico() throws Exception {
+        mockMvc.perform(get("/books")
+                        .param("publicationYear", "abc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void getAllBooks_deveRetornarBadRequest_quandoTotalQuantityNaoForNumerico() throws Exception {
+        mockMvc.perform(get("/books")
+                        .param("totalQuantity", "abc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void getAllBooks_deveRetornarBadRequest_quandoBookStatusForInvalido() throws Exception {
+        mockMvc.perform(get("/books")
+                        .param("bookStatus", "STATUS_INVALIDO")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void getAllBooks_deveRetornarBadRequest_quandoRecordStatusForInvalido() throws Exception {
+        mockMvc.perform(get("/books")
+                        .param("recordStatus", "STATUS_INVALIDO")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'getBookById'
+    @Test
+    public void getBookById_deveRetornarOk_quandoIdForValido() throws Exception {
         Long idBook = 1L;
 
-        BookPatchDTO bookPatchDTO = new BookPatchDTO();
-        bookPatchDTO.setTitle("Titulo teste");
-        bookPatchDTO.setAuthor("Author teste");
-        bookPatchDTO.setIsbn("123456789");
-        bookPatchDTO.setPublicationYear(2000L);
-        bookPatchDTO.setLanguage("Portugues");
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
 
-        BookResponseDTO bookResponseDTO = new BookResponseDTO();
-        bookResponseDTO.setTitle("Titulo teste");
-        bookResponseDTO.setAuthor("Author teste");
-        bookResponseDTO.setIsbn("123456789");
-        bookResponseDTO.setPublicationYear(2000L);
-        bookResponseDTO.setLanguage("Portugues");
-
-        when(bookService.partiallyUpdateBook(bookPatchDTO, idBook))
+        when(bookService.getBookById(idBook))
                 .thenReturn(bookResponseDTO);
 
-        ResponseEntity<BookResponseDTO> resultado = bookController.partiallyUpdateBook(bookPatchDTO, idBook);
+        mockMvc.perform(get("/books/{id}", idBook)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Livro teste"))
+                .andExpect(jsonPath("$.author").value("Autor teste"))
+                .andExpect(jsonPath("$.isbn").value("9788535902778"))
+                .andExpect(jsonPath("$.publicationYear").value(2024))
+                .andExpect(jsonPath("$.language").value("Português"))
+                .andExpect(jsonPath("$.totalQuantity").value(10))
+                .andExpect(jsonPath("$.availableQuantity").value(8))
+                .andExpect(jsonPath("$.registrationDate").value("2024-01-10"))
+                .andExpect(jsonPath("$.bookStatus").value("AVAILABLE"))
+                .andExpect(jsonPath("$.recordStatus").value("ACTIVE"));
 
-        assertEquals(HttpStatus.OK, resultado.getStatusCode());
-        assertNotNull(resultado.getBody());
-        assertEquals("Titulo teste", resultado.getBody().getTitle());
-        assertEquals("Author teste", resultado.getBody().getAuthor());
-        assertEquals("123456789", resultado.getBody().getIsbn());
-        assertEquals(2000L, resultado.getBody().getPublicationYear());
-        assertEquals("Portugues", resultado.getBody().getLanguage());
-
-        verify(bookService).partiallyUpdateBook(bookPatchDTO, idBook);
+        verify(bookService).getBookById(idBook);
         verifyNoMoreInteractions(bookService);
     }
 
     @Test
-    public void deveAtualizarLivroERetornarOk() {
+    public void getBookById_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        mockMvc.perform(get("/books/{id}", "abc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void getBookById_deveRetornarNotFound_quandoIdNaoForInformadoNaRota() throws Exception {
+        mockMvc.perform(get("/books/")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'createBook'
+    @Test
+    public void createBook_deveRetornarCreated_quandoBodyForValido() throws Exception {
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
+
+        String requestJson = """
+                {
+                    "title": "Livro teste",
+                    "author": "Autor teste",
+                    "isbn": "9788535902778",
+                    "publicationYear": 2024,
+                    "language": "Português",
+                    "totalQuantity": 10
+                }
+                """;
+
+        when(bookService.createBook(any(BookCreateDTO.class)))
+                .thenReturn(bookResponseDTO);
+
+        mockMvc.perform(post("/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Livro teste"))
+                .andExpect(jsonPath("$.author").value("Autor teste"))
+                .andExpect(jsonPath("$.isbn").value("9788535902778"))
+                .andExpect(jsonPath("$.publicationYear").value(2024))
+                .andExpect(jsonPath("$.language").value("Português"))
+                .andExpect(jsonPath("$.totalQuantity").value(10))
+                .andExpect(jsonPath("$.availableQuantity").value(8))
+                .andExpect(jsonPath("$.bookStatus").value("AVAILABLE"))
+                .andExpect(jsonPath("$.recordStatus").value("ACTIVE"));
+
+        verify(bookService, times(1)).createBook(any(BookCreateDTO.class));
+        verifyNoMoreInteractions(bookService);
+    }
+
+    @Test
+    public void createBook_deveRetornarBadRequest_quandoRequisicaoEstiverMalFormatada() throws Exception {
+        String requestJson = """
+                {
+                    "title": "Livro teste",
+                    "author": "Autor teste",
+                    "isbn": "9788535902778"
+                """;
+
+        mockMvc.perform(post("/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void createBook_deveRetornarBadRequest_quandoBodyEstiverVazio() throws Exception {
+        mockMvc.perform(post("/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void createBook_deveRetornarUnsupportedMediaType_quandoContentTypeForInvalido() throws Exception {
+        String requestJson = """
+                {
+                    "title": "Livro teste",
+                    "author": "Autor teste",
+                    "isbn": "9788535902778",
+                    "publicationYear": 2024,
+                    "language": "Português",
+                    "totalQuantity": 10
+                }
+                """;
+
+        mockMvc.perform(post("/books")
+                        .contentType(MediaType.APPLICATION_XML)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isUnsupportedMediaType());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'partiallyUpdateBook'
+    @Test
+    public void partiallyUpdateBook_deveRetornarOk_quandoBodyForValido() throws Exception {
         Long idBook = 1L;
 
-        BookUpdateDTO bookUpdateDTO = new BookUpdateDTO();
-        bookUpdateDTO.setTitle("Titulo teste");
-        bookUpdateDTO.setAuthor("Author teste");
-        bookUpdateDTO.setIsbn("123456789");
-        bookUpdateDTO.setPublicationYear(2000L);
-        bookUpdateDTO.setLanguage("Portugues");
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
 
-        BookResponseDTO bookResponseDTO = new BookResponseDTO();
-        bookResponseDTO.setTitle("Titulo teste");
-        bookResponseDTO.setAuthor("Author teste");
-        bookResponseDTO.setIsbn("123456789");
-        bookResponseDTO.setPublicationYear(2000L);
-        bookResponseDTO.setLanguage("Portugues");
+        String requestJson = """
+                {
+                    "title": "Livro teste atualizado"
+                }
+                """;
 
-        when(bookService.updateBook(bookUpdateDTO, idBook))
+        bookResponseDTO.setTitle("Livro teste atualizado");
+
+        when(bookService.partiallyUpdateBook(any(BookPatchDTO.class), eq(idBook)))
                 .thenReturn(bookResponseDTO);
 
-        ResponseEntity<BookResponseDTO> resultado = bookController.updateBook(bookUpdateDTO, idBook);
+        mockMvc.perform(patch("/books/{id}", idBook)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Livro teste atualizado"))
+                .andExpect(jsonPath("$.author").value("Autor teste"))
+                .andExpect(jsonPath("$.isbn").value("9788535902778"));
 
-        assertEquals(HttpStatus.OK, resultado.getStatusCode());
-        assertNotNull(resultado.getBody());
-        assertEquals("Titulo teste", resultado.getBody().getTitle());
-        assertEquals("Author teste", resultado.getBody().getAuthor());
-        assertEquals("123456789", resultado.getBody().getIsbn());
-        assertEquals(2000L, resultado.getBody().getPublicationYear());
-        assertEquals("Portugues", resultado.getBody().getLanguage());
-
-        verify(bookService).updateBook(bookUpdateDTO, idBook);
+        verify(bookService).partiallyUpdateBook(any(BookPatchDTO.class), eq(idBook));
         verifyNoMoreInteractions(bookService);
     }
 
     @Test
-    public void deveDesativarLivroERetornarNoContent() {
+    public void partiallyUpdateBook_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        String requestJson = """
+                {
+                    "title": "Livro teste atualizado"
+                }
+                """;
+
+        mockMvc.perform(patch("/books/{id}", "abc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void partiallyUpdateBook_deveRetornarBadRequest_quandoBodyEstiverVazio() throws Exception {
+        mockMvc.perform(patch("/books/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void partiallyUpdateBook_deveRetornarUnsupportedMediaType_quandoContentTypeForInvalido() throws Exception {
+        String requestJson = """
+                {
+                    "title": "Livro teste atualizado"
+                }
+                """;
+
+        mockMvc.perform(patch("/books/{id}", 1)
+                        .contentType(MediaType.APPLICATION_XML)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isUnsupportedMediaType());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'updateBook'
+    @Test
+    public void updateBook_deveRetornarOk_quandoBodyForValido() throws Exception {
+        Long idBook = 1L;
+
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
+
+        String requestJson = """
+                {
+                    "title": "Livro teste",
+                    "author": "Autor teste",
+                    "isbn": "9788535902778",
+                    "publicationYear": 2024,
+                    "language": "Português",
+                    "totalQuantity": 10
+                }
+                """;
+
+        when(bookService.updateBook(any(BookUpdateDTO.class), eq(idBook)))
+                .thenReturn(bookResponseDTO);
+
+        mockMvc.perform(put("/books/{id}", idBook)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Livro teste"))
+                .andExpect(jsonPath("$.author").value("Autor teste"))
+                .andExpect(jsonPath("$.isbn").value("9788535902778"))
+                .andExpect(jsonPath("$.publicationYear").value(2024))
+                .andExpect(jsonPath("$.language").value("Português"))
+                .andExpect(jsonPath("$.totalQuantity").value(10))
+                .andExpect(jsonPath("$.availableQuantity").value(8));
+
+        verify(bookService).updateBook(any(BookUpdateDTO.class), eq(idBook));
+        verifyNoMoreInteractions(bookService);
+    }
+
+    @Test
+    public void updateBook_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        String requestJson = """
+                {
+                    "title": "Livro teste",
+                    "author": "Autor teste",
+                    "isbn": "9788535902778",
+                    "publicationYear": 2024,
+                    "language": "Português",
+                    "totalQuantity": 10
+                }
+                """;
+
+        mockMvc.perform(put("/books/{id}", "abc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void updateBook_deveRetornarBadRequest_quandoBodyEstiverVazio() throws Exception {
+        mockMvc.perform(put("/books/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void updateBook_deveRetornarBadRequest_quandoRequisicaoEstiverMalFormatada() throws Exception {
+        String requestJson = """
+                {
+                    "title": "Livro teste",
+                    "author": "Autor teste",
+                    "isbn": "9788535902778"
+                """;
+
+        mockMvc.perform(put("/books/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'deactivateBook'
+    @Test
+    public void deactivateBook_deveRetornarNoContent_quandoIdForValido() throws Exception {
         Long idBook = 1L;
 
         doNothing().when(bookService).deactivateBook(idBook);
 
-        ResponseEntity<Void> resultado = bookController.deactivateBook(idBook);
-
-        assertEquals(HttpStatus.NO_CONTENT, resultado.getStatusCode());
-        assertNull(resultado.getBody());
+        mockMvc.perform(patch("/books/{id}/deactivate", idBook))
+                .andExpect(status().isNoContent());
 
         verify(bookService).deactivateBook(idBook);
         verifyNoMoreInteractions(bookService);
     }
 
     @Test
-    public void deveAtivarLivroERetornarNoContent() {
+    public void deactivateBook_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        mockMvc.perform(patch("/books/{id}/deactivate", "abc"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'activateBook'
+    @Test
+    public void activateBook_deveRetornarNoContent_quandoIdForValido() throws Exception {
         Long idBook = 1L;
 
         doNothing().when(bookService).activateBook(idBook);
 
-        ResponseEntity<Void> resultado = bookController.activateBook(idBook);
-
-        assertEquals(HttpStatus.NO_CONTENT, resultado.getStatusCode());
-        assertNull(resultado.getBody());
+        mockMvc.perform(patch("/books/{id}/activate", idBook))
+                .andExpect(status().isNoContent());
 
         verify(bookService).activateBook(idBook);
         verifyNoMoreInteractions(bookService);
     }
 
     @Test
-    public void deveAdicionarEstoqueERetornarOk() {
-        StockDTO stockDTO = new StockDTO();
-        stockDTO.setQuantity(10);
+    public void activateBook_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        mockMvc.perform(patch("/books/{id}/activate", "abc"))
+                .andExpect(status().isBadRequest());
 
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'addStock'
+    @Test
+    public void addStock_deveRetornarOk_quandoBodyForValido() throws Exception {
         Long idBook = 1L;
 
-        BookResponseDTO bookResponseDTO = new BookResponseDTO();
-        bookResponseDTO.setTitle("Titulo teste");
-        bookResponseDTO.setAuthor("Author teste");
-        bookResponseDTO.setIsbn("123456789");
-        bookResponseDTO.setPublicationYear(2000L);
-        bookResponseDTO.setLanguage("Portugues");
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
+        bookResponseDTO.setTotalQuantity(12);
+        bookResponseDTO.setAvailableQuantity(10);
 
-        when(bookService.addStock(stockDTO, idBook))
+        String requestJson = """
+                {
+                    "quantity": 2
+                }
+                """;
+
+        when(bookService.addStock(any(StockDTO.class), eq(idBook)))
                 .thenReturn(bookResponseDTO);
 
-        ResponseEntity<BookResponseDTO> resultado = bookController.addStock(stockDTO, idBook);
+        mockMvc.perform(patch("/books/{id}/add-stock", idBook)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Livro teste"))
+                .andExpect(jsonPath("$.totalQuantity").value(12))
+                .andExpect(jsonPath("$.availableQuantity").value(10));
 
-        assertNotNull(resultado.getBody());
-        assertEquals(HttpStatus.OK, resultado.getStatusCode());
-
-        verify(bookService).addStock(stockDTO, idBook);
+        verify(bookService).addStock(any(StockDTO.class), eq(idBook));
         verifyNoMoreInteractions(bookService);
     }
 
     @Test
-    public void deveRemoverEstoqueERetornarOk() {
-        StockDTO stockDTO = new StockDTO();
-        stockDTO.setQuantity(10);
+    public void addStock_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        String requestJson = """
+                {
+                    "quantity": 2
+                }
+                """;
 
+        mockMvc.perform(patch("/books/{id}/add-stock", "abc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void addStock_deveRetornarBadRequest_quandoBodyEstiverVazio() throws Exception {
+        mockMvc.perform(patch("/books/{id}/add-stock", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void addStock_deveRetornarBadRequest_quandoRequisicaoEstiverMalFormatada() throws Exception {
+        String requestJson = """
+                {
+                    "quantity": 2
+                """;
+
+        mockMvc.perform(patch("/books/{id}/add-stock", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void addStock_deveRetornarUnsupportedMediaType_quandoContentTypeForInvalido() throws Exception {
+        String requestJson = """
+                {
+                    "quantity": 2
+                }
+                """;
+
+        mockMvc.perform(patch("/books/{id}/add-stock", 1)
+                        .contentType(MediaType.APPLICATION_XML)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isUnsupportedMediaType());
+
+        verifyNoInteractions(bookService);
+    }
+
+    // Testes para o metodo 'removeStock'
+    @Test
+    public void removeStock_deveRetornarOk_quandoBodyForValido() throws Exception {
         Long idBook = 1L;
 
-        BookResponseDTO bookResponseDTO = new BookResponseDTO();
-        bookResponseDTO.setTitle("Titulo teste");
-        bookResponseDTO.setAuthor("Author teste");
-        bookResponseDTO.setIsbn("123456789");
-        bookResponseDTO.setPublicationYear(2000L);
-        bookResponseDTO.setLanguage("Portugues");
+        BookResponseDTO bookResponseDTO = criarBookResponseDTO();
+        bookResponseDTO.setTotalQuantity(8);
+        bookResponseDTO.setAvailableQuantity(6);
 
-        when(bookService.removeStock(stockDTO, idBook))
+        String requestJson = """
+                {
+                    "quantity": 2
+                }
+                """;
+
+        when(bookService.removeStock(any(StockDTO.class), eq(idBook)))
                 .thenReturn(bookResponseDTO);
 
-        ResponseEntity<BookResponseDTO> resultado = bookController.removeStock(stockDTO, idBook);
+        mockMvc.perform(patch("/books/{id}/remove-stock", idBook)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Livro teste"))
+                .andExpect(jsonPath("$.totalQuantity").value(8))
+                .andExpect(jsonPath("$.availableQuantity").value(6));
 
-        assertNotNull(resultado.getBody());
-        assertEquals(HttpStatus.OK, resultado.getStatusCode());
-
-        verify(bookService).removeStock(stockDTO, idBook);
+        verify(bookService).removeStock(any(StockDTO.class), eq(idBook));
         verifyNoMoreInteractions(bookService);
+    }
+
+    @Test
+    public void removeStock_deveRetornarBadRequest_quandoIdNaoForNumerico() throws Exception {
+        String requestJson = """
+                {
+                    "quantity": 2
+                }
+                """;
+
+        mockMvc.perform(patch("/books/{id}/remove-stock", "abc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void removeStock_deveRetornarBadRequest_quandoBodyEstiverVazio() throws Exception {
+        mockMvc.perform(patch("/books/{id}/remove-stock", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void removeStock_deveRetornarBadRequest_quandoRequisicaoEstiverMalFormatada() throws Exception {
+        String requestJson = """
+                {
+                    "quantity": 2
+                """;
+
+        mockMvc.perform(patch("/books/{id}/remove-stock", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    public void removeStock_deveRetornarUnsupportedMediaType_quandoContentTypeForInvalido() throws Exception {
+        String requestJson = """
+                {
+                    "quantity": 2
+                }
+                """;
+
+        mockMvc.perform(patch("/books/{id}/remove-stock", 1)
+                        .contentType(MediaType.APPLICATION_XML)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isUnsupportedMediaType());
+
+        verifyNoInteractions(bookService);
     }
 }
