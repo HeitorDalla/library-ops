@@ -7,7 +7,6 @@ import com.heitor.app.entity.Reservation;
 import com.heitor.app.entity.User;
 import com.heitor.app.enums.*;
 import com.heitor.app.exception.*;
-import com.heitor.app.integration.repository.*;
 import com.heitor.app.mapper.ReservationMapper;
 import com.heitor.app.repository.BookRepository;
 import com.heitor.app.repository.FineRepository;

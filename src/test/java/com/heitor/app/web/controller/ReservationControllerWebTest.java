@@ -106,7 +106,7 @@ public class ReservationControllerWebTest {
                 .thenReturn(reservations);
 
         mockMvc.perform(get("/reservations")
-                        .param("reservationStatus", "ACTIVE")
+                        .param("reservationStatus", "PENDING")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -349,10 +349,10 @@ public class ReservationControllerWebTest {
     }
 
     @Test
-    public void returnReservation_deveRetornarNotFound_quandoIdNaoForInformadoNaRota() throws Exception {
+    public void returnReservation_deveRetornarMethodNotAllowed_quandoIdNaoForInformadoNaRota() throws Exception {
         mockMvc.perform(patch("/reservations/return")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isMethodNotAllowed());
 
         verifyNoInteractions(reservationService);
     }
@@ -380,9 +380,9 @@ public class ReservationControllerWebTest {
     }
 
     @Test
-    public void cancelReservation_deveRetornarNotFound_quandoIdNaoForInformadoNaRota() throws Exception {
+    public void cancelReservation_deveRetornarMethodNotAllowed_quandoIdNaoForInformadoNaRota() throws Exception {
         mockMvc.perform(patch("/reservations/cancel"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isMethodNotAllowed());
 
         verifyNoInteractions(reservationService);
     }

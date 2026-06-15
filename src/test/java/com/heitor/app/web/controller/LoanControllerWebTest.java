@@ -222,7 +222,7 @@ public class LoanControllerWebTest {
         String requestJson = """
                 {
                     "userId": 1,
-                    "bookId": 1
+                    "bookIds": [1]
                 }
                 """;
 
@@ -350,10 +350,10 @@ public class LoanControllerWebTest {
     }
 
     @Test
-    public void returnLoan_deveRetornarNotFound_quandoIdNaoForInformadoNaRota() throws Exception {
+    public void returnLoan_deveRetornarMethodNotAllowed_quandoIdNaoForInformadoNaRota() throws Exception {
         mockMvc.perform(put("/loans/return")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isMethodNotAllowed());
 
         verifyNoInteractions(loanService);
     }
