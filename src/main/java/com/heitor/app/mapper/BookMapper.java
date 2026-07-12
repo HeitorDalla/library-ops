@@ -26,20 +26,19 @@ public class BookMapper {
             return null;
         }
 
-        BookResponseDTO dto = new BookResponseDTO();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        dto.setAuthor(entity.getAuthor());
-        dto.setIsbn(entity.getIsbn());
-        dto.setPublicationYear(entity.getPublicationYear());
-        dto.setLanguage(entity.getLanguage());
-        dto.setTotalQuantity(entity.getTotalQuantity());
-        dto.setRegistrationDate(entity.getRegistrationDate());
-        dto.setAvailableQuantity(entity.getAvailableQuantity());
-        dto.setBookStatus(entity.getBookStatus());
-        dto.setRecordStatus(entity.getRecordStatus());
-
-        return dto;
+        return BookResponseDTO.builder()
+                .id(entity.getId())
+                .title(entity.getTitle())
+                .author(entity.getAuthor())
+                .isbn(entity.getIsbn())
+                .publicationYear(entity.getPublicationYear())
+                .language(entity.getLanguage())
+                .totalQuantity(entity.getTotalQuantity())
+                .registrationDate(entity.getRegistrationDate())
+                .availableQuantity(entity.getAvailableQuantity())
+                .bookStatus(entity.getBookStatus())
+                .recordStatus(entity.getRecordStatus())
+                .build();
     }
 
     public Book toEntity(BookCreateDTO dto) {
@@ -47,15 +46,14 @@ public class BookMapper {
             return null;
         }
 
-        Book book = new Book();
-        book.setTitle(dto.getTitle());
-        book.setAuthor(dto.getAuthor());
-        book.setIsbn(dto.getIsbn());
-        book.setPublicationYear(dto.getPublicationYear());
-        book.setLanguage(dto.getLanguage());
-        book.setTotalQuantity(dto.getTotalQuantity());
-
-        return book;
+        return Book.builder()
+                .title(dto.getTitle())
+                .author(dto.getAuthor())
+                .isbn(dto.getIsbn())
+                .publicationYear(dto.getPublicationYear())
+                .language(dto.getLanguage())
+                .totalQuantity(dto.getTotalQuantity())
+                .build();
     }
 
     public void patchEntity(BookPatchDTO dto, Book entity) {

@@ -26,16 +26,15 @@ public class UserMapper {
             return null;
         }
 
-        UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setNumber(entity.getNumber());
-        dto.setEmail(entity.getEmail());
-        dto.setRegistrationDate(entity.getRegistrationDate());
-        dto.setUserStatus(entity.getUserStatus());
-        dto.setRecordStatus(entity.getRecordStatus());
-
-        return dto;
+        return UserResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .number(entity.getNumber())
+                .email(entity.getEmail())
+                .registrationDate(entity.getRegistrationDate())
+                .userStatus(entity.getUserStatus())
+                .recordStatus(entity.getRecordStatus())
+                .build();
     }
 
     // Converte o DTO de entrada para uma nova Entity (POST ou PUT)
@@ -44,12 +43,11 @@ public class UserMapper {
             return null;
         }
 
-        User user = new User();
-        user.setName(dto.getName());
-        user.setNumber(dto.getNumber());
-        user.setEmail(dto.getEmail());
-
-        return user;
+        return User.builder()
+                .name(dto.getName())
+                .number(dto.getNumber())
+                .email(dto.getEmail())
+                .build();
     }
 
     // Atualiza apenas os campos NÃO-NULL do DTO na Entity existente (EVITAR SOBRESCREVER CAMPOS COM 'NULL')

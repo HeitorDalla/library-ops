@@ -143,13 +143,14 @@ public class LoanServiceImpl implements LoanService {
 
         // Regra de criação de multa
         if (loan.getReturnDate().isAfter(loan.getDueDate())) {
-            Fine fine = new Fine();
-            fine.setLoan(loan);
-            fine.setAmount(new BigDecimal("25.00"));
-            fine.setFineStatus(FineStatus.OPEN);
-            fine.setRecordStatus(RecordStatus.ACTIVE);
-            fine.setCreatedDate(LocalDate.now());
-            fine.setPaymentDate(null);
+            Fine fine = Fine.builder()
+                    .loan(loan)
+                    .amount(new BigDecimal("25.00"))
+                    .fineStatus(FineStatus.OPEN)
+                    .recordStatus(RecordStatus.ACTIVE)
+                    .createdDate(LocalDate.now())
+                    .paymentDate(null)
+                    .build();
 
             Fine savedFine = fineService.saveFine(fine);
             loan.setFine(savedFine);

@@ -26,17 +26,17 @@ public class ReservationMapper {
             return null;
         }
 
-        ReservationResponseDTO dto = new ReservationResponseDTO();
-        dto.setId(entity.getId());
-        dto.setUserId(entity.getUser().getId());
-        dto.setBookId(entity.getBook().getId());
-        dto.setReservationDate(entity.getReservationDate());
-        dto.setDueDate(entity.getDueDate());
-        dto.setReturnDate(entity.getReturnDate());
-        dto.setReservationStatus(entity.getReservationStatus());
-        dto.setRecordStatus(entity.getRecordStatus());
+        return ReservationResponseDTO.builder()
+                .id(entity.getId())
+                .userId(entity.getUser().getId())
+                .bookId(entity.getBook().getId())
+                .reservationDate(entity.getReservationDate())
+                .dueDate(entity.getDueDate())
+                .returnDate(entity.getReturnDate())
+                .reservationStatus(entity.getReservationStatus())
+                .recordStatus(entity.getRecordStatus())
+                .build();
 
-        return dto;
     }
 
     public Reservation toEntity(ReservationRequestDTO dto, User user, Book book) {
@@ -44,10 +44,9 @@ public class ReservationMapper {
             return null;
         }
 
-        Reservation reservation = new Reservation();
-        reservation.setUser(user);
-        reservation.setBook(book);
-
-        return reservation;
+        return Reservation.builder()
+                .user(user)
+                .book(book)
+                .build();
     }
 }

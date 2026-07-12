@@ -26,30 +26,27 @@ public class LoanMapper {
             return null;
         }
 
-        LoanResponseDTO dto = new LoanResponseDTO();
-        dto.setId(loan.getId());
-        dto.setLoanDate(loan.getLoanDate());
-        dto.setDueDate(loan.getDueDate());
-        dto.setReturnDate(loan.getReturnDate());
-        dto.setLoanStatus(loan.getLoanStatus());
-        dto.setRecordStatus(loan.getRecordStatus());
-        dto.setUserId(loan.getUser().getId());
-        dto.setBooksId(
-                loan.getBooks()
-                        .stream()
-                        .map(Book::getId)
-                        .toList()
-        );
-        dto.setHasFine(loan.getFine() != null);
-
-        return dto;
+        return LoanResponseDTO.builder()
+                .id(loan.getId())
+                .loanDate(loan.getLoanDate())
+                .dueDate(loan.getDueDate())
+                .returnDate(loan.getReturnDate())
+                .loanStatus(loan.getLoanStatus())
+                .recordStatus(loan.getRecordStatus())
+                .userId(loan.getUser().getId())
+                .booksId(
+                        loan.getBooks().stream()
+                                .map(Book::getId)
+                                .toList()
+                )
+                .hasFine(loan.getFine() != null)
+                .build();
     }
 
     public Loan toEntity(User user, List<Book> books) {
-        Loan loan = new Loan();
-        loan.setUser(user);
-        loan.setBooks(books);
-
-        return loan;
+        return Loan.builder()
+                .user(user)
+                .books(books)
+                .build();
     }
 }

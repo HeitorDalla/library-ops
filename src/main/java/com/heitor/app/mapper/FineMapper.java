@@ -23,15 +23,14 @@ public class FineMapper {
             return null;
         }
 
-        FineResponseDTO dto = new FineResponseDTO();
-        dto.setId(entity.getId());
-        dto.setAmount(entity.getAmount());
-        dto.setFineStatus(entity.getFineStatus());
-        dto.setRecordStatus(entity.getRecordStatus());
-        dto.setCreatedDate(entity.getCreatedDate());
-        dto.setPaymentDate(entity.getPaymentDate());
-        dto.setLoanId(entity.getLoan().getId());
-
-        return dto;
+        return FineResponseDTO.builder()
+                .id(entity.getId())
+                .amount(entity.getAmount())
+                .fineStatus(entity.getFineStatus())
+                .recordStatus(entity.getRecordStatus())
+                .createdDate(entity.getCreatedDate())
+                .paymentDate(entity.getPaymentDate())
+                .loanId(entity.getLoan().getId())
+                .build();
     }
 }
