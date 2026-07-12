@@ -4,11 +4,17 @@ import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.enums.UserStatus;
 import com.heitor.app.exception.BusinessException;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 // @Cacheable  // anotacao para a implementacao do cache nivel 2 do hibernate
 @Table(name = "users")
@@ -47,110 +53,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
-
-    public User() {}
-
-    public User(Long id,
-                String name,
-                String password,
-                String number,
-                String email,
-                LocalDate registrationDate,
-                UserStatus userStatus,
-                RecordStatus recordStatus,
-                List<Loan> loans,
-                List<Reservation> reservations) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.number = number;
-        this.email = email;
-        this.registrationDate = registrationDate;
-        this.userStatus = userStatus;
-        this.recordStatus = recordStatus;
-        this.loans = loans;
-        this.reservations = reservations;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public UserStatus getUserStatus() {
-        return userStatus;
-    }
-
-    public void setUserStatus(UserStatus userStatus) {
-        this.userStatus = userStatus;
-    }
-
-    public RecordStatus getRecordStatus() {
-        return recordStatus;
-    }
-
-    public void setRecordStatus(RecordStatus recordStatus) {
-        this.recordStatus = recordStatus;
-    }
-
-    public List<Loan> getLoans() {
-        return loans;
-    }
-
-    public void setLoans(List<Loan> loans) {
-        this.loans = loans;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
 
     public void activate() {
         userStatus = UserStatus.OK;

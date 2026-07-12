@@ -4,11 +4,17 @@ import com.heitor.app.enums.LoanStatus;
 import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.exception.BusinessException;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "loans")
 public class Loan {
@@ -49,100 +55,6 @@ public class Loan {
 
     @OneToOne(mappedBy = "loan")
     private Fine fine;
-
-    public Loan() {}
-
-    public Loan(Long id,
-                LocalDate loanDate,
-                LocalDate dueDate,
-                LocalDate returnDate,
-                LoanStatus loanStatus,
-                RecordStatus recordStatus,
-                User user,
-                Fine fine,
-                List<Book> books) {
-        this.id = id;
-        this.loanDate = loanDate;
-        this.dueDate = dueDate;
-        this.returnDate = returnDate;
-        this.loanStatus = loanStatus;
-        this.recordStatus = recordStatus;
-        this.user = user;
-        this.fine = fine;
-        this.books = books;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDate getLoanDate() {
-        return loanDate;
-    }
-
-    public void setLoanDate(LocalDate loanDate) {
-        this.loanDate = loanDate;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public LocalDate getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
-    }
-
-    public LoanStatus getLoanStatus() {
-        return loanStatus;
-    }
-
-    public void setLoanStatus(LoanStatus loanStatus) {
-        this.loanStatus = loanStatus;
-    }
-
-    public RecordStatus getRecordStatus() {
-        return recordStatus;
-    }
-
-    public void setRecordStatus(RecordStatus recordStatus) {
-        this.recordStatus = recordStatus;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Fine getFine() {
-        return fine;
-    }
-
-    public void setFine(Fine fine) {
-        this.fine = fine;
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
 
     public void initialize() {
         loanDate = LocalDate.now();

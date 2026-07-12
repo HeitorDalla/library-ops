@@ -4,11 +4,17 @@ import com.heitor.app.enums.BookStatus;
 import com.heitor.app.enums.RecordStatus;
 import com.heitor.app.exception.BusinessException;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "books")
 public class Book {
@@ -56,140 +62,6 @@ public class Book {
     @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private List<Loan> loans = new ArrayList<>();
 
-    public Book() {}
-
-    public Book(Long id,
-                String title,
-                String author,
-                String isbn,
-                Long publicationYear,
-                String language,
-                Integer totalQuantity,
-                Integer availableQuantity,
-                LocalDate registrationDate,
-                BookStatus bookStatus,
-                RecordStatus recordStatus,
-                List<Reservation> reservations,
-                List<Loan> loans) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.publicationYear = publicationYear;
-        this.language = language;
-        this.totalQuantity = totalQuantity;
-        this.availableQuantity = availableQuantity;
-        this.registrationDate = registrationDate;
-        this.bookStatus = bookStatus;
-        this.recordStatus = recordStatus;
-        this.reservations = reservations;
-        this.loans = loans;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public Long getPublicationYear() {
-        return publicationYear;
-    }
-
-    public void setPublicationYear(Long publicationYear) {
-        this.publicationYear = publicationYear;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public Integer getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    public void setTotalQuantity(Integer totalQuantity) {
-        this.totalQuantity = totalQuantity;
-    }
-
-    public Integer getAvailableQuantity() {
-        return availableQuantity;
-    }
-
-    public void setAvailableQuantity(Integer availableQuantity) {
-        this.availableQuantity = availableQuantity;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public BookStatus getBookStatus() {
-        return bookStatus;
-    }
-
-    public void setBookStatus(BookStatus bookStatus) {
-        this.bookStatus = bookStatus;
-    }
-
-    public RecordStatus getRecordStatus() {
-        return recordStatus;
-    }
-
-    public void setRecordStatus(RecordStatus recordStatus) {
-        this.recordStatus = recordStatus;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
-
-    public List<Loan> getLoans() {
-        return loans;
-    }
-
-    public void setLoans(List<Loan> loans) {
-        this.loans = loans;
-    }
-
     public void activate() {
         bookStatus = BookStatus.AVAILABLE;
         recordStatus = RecordStatus.ACTIVE;
@@ -206,17 +78,17 @@ public class Book {
         }
     }
 
-    public void initialize(Integer totalQuantity) {
+    public void initialize(Integer newTotalQuantity) {
         if (id != null) {
             throw new BusinessException("Book already initialized.");
         }
 
-        if (totalQuantity == null || totalQuantity <= 0) {
+        if (newTotalQuantity == null || newTotalQuantity <= 0) {
             throw new BusinessException("Total quantity must be greater than zero.");
         }
 
         registrationDate = LocalDate.now();
-        this.totalQuantity = totalQuantity;
+        this.totalQuantity = newTotalQuantity;
         availableQuantity = totalQuantity;
         activate();
     }
