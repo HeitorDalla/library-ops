@@ -35,21 +35,19 @@ public class BookControllerWebTest {
     private BookService bookService;
 
     private BookResponseDTO criarBookResponseDTO() {
-        BookResponseDTO bookResponseDTO = new BookResponseDTO();
-
-        bookResponseDTO.setId(1L);
-        bookResponseDTO.setTitle("Livro teste");
-        bookResponseDTO.setAuthor("Autor teste");
-        bookResponseDTO.setIsbn("9788535902778");
-        bookResponseDTO.setPublicationYear(2024L);
-        bookResponseDTO.setLanguage("Português");
-        bookResponseDTO.setTotalQuantity(10);
-        bookResponseDTO.setAvailableQuantity(8);
-        bookResponseDTO.setRegistrationDate(LocalDate.of(2024, 1, 10));
-        bookResponseDTO.setBookStatus(BookStatus.AVAILABLE);
-        bookResponseDTO.setRecordStatus(RecordStatus.ACTIVE);
-
-        return bookResponseDTO;
+        return BookResponseDTO.builder()
+                .id(1L)
+                .title("Livro teste")
+                .author("Autor teste")
+                .isbn("9788535902778")
+                .publicationYear(2024L)
+                .language("Português")
+                .totalQuantity(10)
+                .availableQuantity(8)
+                .registrationDate(LocalDate.of(2024, 1, 10))
+                .bookStatus(BookStatus.AVAILABLE)
+                .recordStatus(RecordStatus.ACTIVE)
+                .build();
     }
 
     // Testes para o metodo 'getAllBooks'

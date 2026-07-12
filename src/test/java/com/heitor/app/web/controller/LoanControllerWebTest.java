@@ -30,10 +30,9 @@ public class LoanControllerWebTest {
     private LoanService loanService;
 
     private LoanResponseDTO criarLoanResponseDto() {
-        LoanResponseDTO loanResponseDTO = new LoanResponseDTO();
-        loanResponseDTO.setId(1L);
-
-        return loanResponseDTO;
+        return LoanResponseDTO.builder()
+                .id(1L)
+                .build();
     }
 
     // Testes para o metodo 'getAllLoans'

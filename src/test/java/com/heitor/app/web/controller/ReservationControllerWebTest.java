@@ -30,10 +30,9 @@ public class ReservationControllerWebTest {
     private ReservationService reservationService;
 
     private ReservationResponseDTO criarReservationResponseDto() {
-        ReservationResponseDTO reservationResponseDTO = new ReservationResponseDTO();
-        reservationResponseDTO.setId(1L);
-
-        return reservationResponseDTO;
+        return ReservationResponseDTO.builder()
+                .id(1L)
+                .build();
     }
 
     // Testes para o metodo 'getAllReservations'

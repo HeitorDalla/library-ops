@@ -31,17 +31,15 @@ public class FineControllerWebTest {
     private FineService fineService;
 
     private FineResponseDTO criarFineResponseDTO() {
-        FineResponseDTO fineResponseDTO = new FineResponseDTO();
-
-        fineResponseDTO.setId(1L);
-        fineResponseDTO.setAmount(new BigDecimal("25.50"));
-        fineResponseDTO.setFineStatus(FineStatus.OPEN);
-        fineResponseDTO.setCreatedDate(LocalDate.of(2024, 1, 10));
-        fineResponseDTO.setPaymentDate(null);
-        fineResponseDTO.setLoanId(10L);
-        fineResponseDTO.setRecordStatus(RecordStatus.ACTIVE);
-
-        return fineResponseDTO;
+        return FineResponseDTO.builder()
+                .id(1L)
+                .amount(new BigDecimal("25.50"))
+                .fineStatus(FineStatus.OPEN)
+                .createdDate(LocalDate.of(2024, 1, 10))
+                .paymentDate(null)
+                .loanId(10L)
+                .recordStatus(RecordStatus.ACTIVE)
+                .build();
     }
 
     // Testes para o metodo 'getAllFines'

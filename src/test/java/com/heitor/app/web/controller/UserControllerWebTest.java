@@ -30,13 +30,12 @@ public class UserControllerWebTest {
     private UserService userService;
 
     private UserResponseDTO criarUserResponseDto() {
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setId(1L);
-        userResponseDTO.setName("Nome teste");
-        userResponseDTO.setNumber("4399999999");
-        userResponseDTO.setEmail("emailteste@gmail.com");
-
-        return userResponseDTO;
+        return UserResponseDTO.builder()
+                .id(1L)
+                .name("Nome teste")
+                .number("4399999999")
+                .email("emailteste@gmail.com")
+                .build();
     }
 
     // Testes para o metodo 'getAllUsers'
@@ -398,8 +397,9 @@ public class UserControllerWebTest {
     public void getUserLoans_deveRetornarOk_quandoIdForValido() throws Exception {
         Long idUser = 1L;
 
-        LoanResponseDTO loan = new LoanResponseDTO();
-        loan.setId(10L);
+        LoanResponseDTO loan = LoanResponseDTO.builder()
+                .id(10L)
+                .build();
 
         List<LoanResponseDTO> loans = List.of(loan);
 
@@ -428,8 +428,9 @@ public class UserControllerWebTest {
     public void getUserReservations_deveRetornarOk_quandoIdForValido() throws Exception {
         Long idUser = 1L;
 
-        ReservationResponseDTO reservation = new ReservationResponseDTO();
-        reservation.setId(20L);
+        ReservationResponseDTO reservation = ReservationResponseDTO.builder()
+                .id(20L)
+                .build();
 
         List<ReservationResponseDTO> reservations = List.of(reservation);
 
